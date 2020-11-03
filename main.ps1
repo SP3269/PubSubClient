@@ -1,11 +1,19 @@
 # Dependencies section
 Import-module JWT
+Import-Module AWSPowerShell.NetCore
 
 # Configuration section
 $sa = "messenger@apiaccess-294500.iam.gserviceaccount.com" # Your service account
-$cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2("./apiaccess-294500-9cfa51b07fae.p12", "notasecret")
 $scope = "https://www.googleapis.com/auth/pubsub" #Authorization scope 
 $topic = "projects/apiaccess-294500/topics/messagebus" # The Pub/Sub topic id
+$secretid = "arn:aws:secretsmanager:us-west-2:823519568520:secret:P12Key-DyyfF0"
+
+# $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2("./apiaccess-294500-9cfa51b07fae.p12", "notasecret")
+# Using AWS Secrets Manager for key storage instead
+$secret = Get-SECSecretValue -SecretId $secretid -Verbose
+$b64 = ($secret.SecretString | ConvertFrom-Json).P12Key
+$cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2([Convert]::FromBase64String($b64), "notasecret")
+
 $data = "Test Data" # Data to publish into the topic
 
 # Authentication
@@ -52,8 +60,6 @@ $req = @{
         }
     )
 } | ConvertTo-Json
-
-$req = '{"messages":[{"data":"VGVzdCBEYXRh"}]}'
 
 $splat = @{
     Method = "POST"
