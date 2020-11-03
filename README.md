@@ -7,3 +7,6 @@ AWS Lambda function to push messages to a Pub/Sub topic in GCP
 - AWS: created IAM user `robot` in a group `roboter`; granted Secrets Manager permission; generated access key and secret for the user;
 - AWS Tools for PowerShell installation - had to use `Set-AWSCredential -AccessKey AK... -Secret Pr... -StoreAs default`, as `Initialize-AWSDefaultConfiguration` didn't update the profile (verify with `Get-AWSCredential -ListProfileDetail`)
 - Installed the `AWSLambdaPSCore` module and generated the Lambda from template: `New-AWSPowerShellLambda -ScriptName SNSProcessor -Template SNSSubscription`
+- Deployment using `ublish-AWSPowerShellLambda -ScriptPath .\SNSProcessor.ps1 -Name  SNSProcessor -Region us-west-2`, adding IAM role `SNSProcessing` and attaching (initially) the `AWSLambdaBasicExecutionRole` IAM Policy
+- Add IAM policy for Secrets Mamager
+- Test with `aws lambda invoke --function-name SNSProcessor out`

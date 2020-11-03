@@ -1,0 +1,8 @@
+{
+  "errorType": "ParentContainsErrorRecordException",
+  "errorMessage": "Cannot find path '/var/task/config.json' because it does not exist.",
+  "stackTrace": [
+    "at Amazon.Lambda.PowerShellHost.PowerShellFunctionHost.ExecuteFunction(Stream inputStream, ILambdaContext context)",
+    "at lambda_method(Closure , Stream , Stream , LambdaContextInternal )"
+  ]
+}
