@@ -4,7 +4,6 @@ Import-Module AWSPowerShell.NetCore
 
 # Configuration section
 $sa = "messenger@apiaccess-294500.iam.gserviceaccount.com" # Your service account
-$scope = "https://www.googleapis.com/auth/pubsub" #Authorization scope 
 $topic = "projects/apiaccess-294500/topics/messagebus" # The Pub/Sub topic id
 $secretid = "arn:aws:secretsmanager:us-west-2:823519568520:secret:P12Key-DyyfF0"
 
@@ -14,9 +13,11 @@ $secret = Get-SECSecretValue -SecretId $secretid -Verbose
 $b64 = ($secret.SecretString | ConvertFrom-Json).P12Key
 $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2([Convert]::FromBase64String($b64), "notasecret")
 
-$data = "Test Data" # Data to publish into the topic
+$data = "Test Data $(Get-Date)" # Data to publish into the topic
 
 # Authentication
+
+$scope = "https://www.googleapis.com/auth/pubsub" # Authorization scope 
 
 $now = (Get-Date).ToUniversalTime()
 $createDate = [Math]::Floor([decimal](Get-Date($now) -UFormat "%s"))

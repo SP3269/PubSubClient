@@ -1,0 +1,5 @@
+{
+    "sa": "messenger@apiaccess-294500.iam.gserviceaccount.com",
+    "topic": "projects/apiaccess-294500/topics/messagebus",
+    "secretid": "arn:aws:secretsmanager:us-west-2:823519568520:secret:P12Key-DyyfF0"
+}
