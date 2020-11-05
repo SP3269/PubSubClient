@@ -14,10 +14,11 @@
 #Requires -Modules @{ModuleName='JWT';ModuleVersion='1.9.0'}
 
 # Setting up the environment
-$config = Get-Content ./config.json | ConvertFrom-Json
-$sa = $config.sa
-$topic = $config.topic
-$secretid = $config.secretid
+# $config = Get-Content ./config.json | ConvertFrom-Json
+$sa = $env:sa
+$topic = $env:topic
+$secretid = $env:secretid
+Write-Host "Using service account: $sa; secret id: $secretid; publishing to topic: $topic"
 
 # Retreiving the service account P12 credentials from AWS Secrets Manager
 # Assuming Base64-encoded value of `P12Key`
