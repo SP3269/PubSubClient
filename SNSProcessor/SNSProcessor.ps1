@@ -81,6 +81,11 @@ foreach ($record in $LambdaInput.Records) {
         messages = @(
             @{
                 data = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($message))
+                attributes = @( 
+                    @{
+                        subject = $subject
+                    }
+                )
             }
         )
     } | ConvertTo-Json

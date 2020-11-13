@@ -13,3 +13,6 @@ AWS Lambda function to push messages to a Pub/Sub topic in GCP
 - [Adding files to Lambda ZIP package](https://stackoverflow.com/questions/61932451/powershell-how-to-package-custom-modules-into-a-zip-package-for-aws-lamdba)
 - Configuration into the environment: `$config = gc ./config.json | ConvertFrom-Json -AsHashtable`
 - Deployment with the environment
+
+$config = gc ./config.json | ConvertFrom-Json -AsHashtable
+Publish-AWSPowerShellLambda -ScriptPath .\SNSProcessor.ps1 -Name SNSProcessor -Region us-west-2 -EnvironmentVariable $config 
