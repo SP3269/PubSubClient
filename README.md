@@ -1,5 +1,39 @@
 # PubSubClient
-AWS Lambda function to push messages to a Pub/Sub topic in GCP
+AWS Lambda function that subscribes to SNS topic and forwards messages to a Cloud Pub/Sub topic on Google Cloud platform (GCP)
+
+## Prerequisites
+
+### AWS
+
+### GCP
+
+### Local development environment
+
+## Deployment
+
+The Lambda function needs to be configured with the following parameters in the environment:
+* `topic` - the Pub/Sub topic id, matching pattern `/^projects\/[^/]+\/topics\/[^/]+$/`;
+* `sa` - the GCP service account configured to publish to the Pub/Sub topic; and
+* `secretid` - the ARN of 
+
+An easy way to manage the runtime parameters is creating a configuration file, `config.json`:
+
+```json
+{
+    "sa": "messenger@apiaccess-294500.iam.gserviceaccount.com",
+    "topic": "projects/apiaccess-294500/topics/messagebus",
+    "secretid": "arn:aws:secretsmanager:us-west-2:823519568520:secret:P12Key-DyyfF0"
+}
+```
+
+Then, deploy the Lambda:
+
+```powershell
+$config = Get-Content ./config.json | ConvertFrom-Json -AsHashtable
+Publish-AWSPowerShellLambda -ScriptPath .\SNSProcessor.ps1 -Name SNSProcessor -Region us-west-2 -EnvironmentVariable $config
+```
+
+Lambda runtime will inject the configuration to the environment, and the PowerShell code will refer to the environment variables.
 
 ## Development notes
 - GCP: created PubSub topic and service account with PubSub Publisher permissions; generated _P12_ credentials of the service account;
@@ -14,5 +48,4 @@ AWS Lambda function to push messages to a Pub/Sub topic in GCP
 - Configuration into the environment: `$config = gc ./config.json | ConvertFrom-Json -AsHashtable`
 - Deployment with the environment
 
-$config = gc ./config.json | ConvertFrom-Json -AsHashtable
-Publish-AWSPowerShellLambda -ScriptPath .\SNSProcessor.ps1 -Name SNSProcessor -Region us-west-2 -EnvironmentVariable $config 
+
