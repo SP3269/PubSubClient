@@ -18,13 +18,14 @@
 $sa = $env:sa
 $topic = $env:topic
 $secretid = $env:secretid
+$secretkey = $env:secretkey
 Write-Host "Using service account: $sa; secret id: $secretid; publishing to topic: $topic"
 
 # Retreiving the service account P12 credentials from AWS Secrets Manager
 # Assuming Base64-encoded value of `P12Key`
 try {
     $secret = Get-SECSecretValue -SecretId $secretid -Verbose -ErrorAction Stop
-    $b64 = ($secret.SecretString | ConvertFrom-Json).P12Key
+    $b64 = ($secret.SecretString | ConvertFrom-Json).$secretkey
     $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2([Convert]::FromBase64String($b64), "notasecret")
 }
 catch {
@@ -81,14 +82,12 @@ foreach ($record in $LambdaInput.Records) {
         messages = @(
             @{
                 data = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($message))
-                attributes = @( 
-                    @{
-                        subject = $subject
-                    }
-                )
+                attributes = @{
+                    subject = $subject
+                }
             }
         )
-    } | ConvertTo-Json
+    } | ConvertTo-Json -Depth 3
 
     $splat = @{
         Method = "POST"

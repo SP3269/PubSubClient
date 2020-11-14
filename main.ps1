@@ -6,14 +6,13 @@ Import-Module AWSPowerShell.NetCore
 $sa = "messenger@apiaccess-294500.iam.gserviceaccount.com" # Your service account
 $topic = "projects/apiaccess-294500/topics/messagebus" # The Pub/Sub topic id
 $secretid = "arn:aws:secretsmanager:us-west-2:823519568520:secret:P12Key-DyyfF0"
+$secretname = "P12Key"
 
 # $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2("./apiaccess-294500-9cfa51b07fae.p12", "notasecret")
 # Using AWS Secrets Manager for key storage instead
 $secret = Get-SECSecretValue -SecretId $secretid -Verbose
-$b64 = ($secret.SecretString | ConvertFrom-Json).P12Key
+$b64 = ($secret.SecretString | ConvertFrom-Json).$secretname
 $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2([Convert]::FromBase64String($b64), "notasecret")
-
-$data = "Test Data $(Get-Date)" # Data to publish into the topic
 
 # Authentication
 
@@ -54,13 +53,19 @@ $accesstoken = $res.access_token
 
 $apiuri = "https://pubsub.googleapis.com/v1/${topic}:publish"
 
+$subject = "Test subject"
+$data = "Test Data $(Get-Date)" # Data to publish into the topic
+
 $req = @{
     messages = @(
         @{
             data = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($data))
+            attributes = @{
+                    subject = $subject
+            }
         }
     )
-} | ConvertTo-Json
+} | ConvertTo-Json -Depth 3
 
 $splat = @{
     Method = "POST"
@@ -71,3 +76,4 @@ $splat = @{
 }
 
 $publishres = Invoke-RestMethod @splat -Verbose
+$publishres # Outputs the result of publishing to the Pub/Sub topic
