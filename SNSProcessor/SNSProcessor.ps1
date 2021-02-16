@@ -99,6 +99,6 @@ foreach ($record in $LambdaInput.Records) {
 
     $publishres = Invoke-RestMethod @splat -Verbose
     Write-Host "Published $($publishres.messageIds) to $topic"
-    $oublishres | ConvertTo-Json -Compress # Sending the JSON to the function output
+    $publishres | ConvertTo-Json -Compress # Sending the JSON to the function output
 
 }
